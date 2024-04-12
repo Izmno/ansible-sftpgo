@@ -1,0 +1,16 @@
+namespace: izmno
+name: sftpgo
+description: Manage users and virtual folders on SFTPGo
+tags:
+  - sftpgo
+  - sftp
+  - users
+  - virtual folders
+  - management
+repository: github.com/izmno/ansible-sftpgo
+license: 
+  - GPL-3.0-or-later
+version: 0.1.0
+authors:
+  - Simon De Meyere <simon@izmno.be>
+readme: README.md

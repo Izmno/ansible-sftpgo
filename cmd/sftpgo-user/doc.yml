@@ -1,0 +1,160 @@
+DOCUMENTATION:
+    module: sftpo-user
+
+    short_description: Create, update or delete a user in SFTPGo
+    version_added: "0.1.0"
+
+    description: |
+        Create, update or delete a user in SFTPGo. This module 
+        uses the SFTPGo REST API to manage users and can be run on any 
+        host that has network access to the SFTPGo server.
+
+    options:
+        base_url:
+            description: The base URL of the SFTPGo server.
+            required: true
+            type: str
+        admin_username:
+            description: The username of the admin user that has permission to use the REST API.
+            required: true
+            type: str
+        admin_password:
+            description: The password of the admin user .
+            required: true
+            type: str
+        state:
+            description: The expected state of the user.
+            required: false
+            type: str
+            default: present
+            choices:
+                - present
+                - absent
+        userdata:
+            description: The user data for the user to manage. Required when state is present.
+            required: false
+            type: dict
+            options:
+                username:
+                    description: The username of the user.
+                    required: true
+                    type: str
+                status:
+                    description: The status of the user. If set to 0, the user is disabled and login is disallowed. If set to 1, the user is enabled.
+                    required: false
+                    type: int
+                    default: 0
+                    choices:
+                        - 0
+                        - 1
+                email:
+                    description: The email address of the user.
+                    required: false
+                    type: str
+                expiration_date:
+                    description: The expiration date of the user. Unix timestamp, 0 means no expiration date.
+                    required: false
+                    type: int
+                    default: 0
+                public_keys:
+                    description: A list of public keys for the user.
+                    required: false
+                    type: list
+                    elements: str
+                max_sessions:
+                    description: The maximum number of sessions the user can have. 0 means unlimited.
+                    required: false
+                    type: int
+                    default: 0
+                quota_size:
+                    description: The quota size of the user in bytes. 0 means unlimited.
+                    required: false
+                    type: int
+                    default: 0
+                quota_files:
+                    description: The quota files of the user. 0 means unlimited.
+                    required: false
+                    type: int
+                    default: 0
+                permissions:
+                    description: The permissions for the user.
+                    required: false
+                    type: dict
+                    elements:
+                        path:
+                            description: The path for the permission.
+                            required: true
+                            type: str
+                        permission:
+                            description: The permission for the path. '*' means all permissions.
+                            required: true
+                            type: list
+                            elements: str
+                upload_bandwidth:
+                    description: The upload bandwidth of the user in KB per second. 0 means unlimited.
+                    required: false
+                    type: int
+                    default: 0
+                download_bandwidth:
+                    description: The download bandwidth of the user in KB per second. 0 means unlimited.
+                    required: false
+                    type: int
+                    default: 0
+                description:
+                    description: The description of the user.
+                    required: false
+                    type: str
+                additional_info:
+                    description: Additional information about the user.
+                    required: false
+                    type: str
+                groups:
+                    description: A list of groups for the user.
+                    required: false
+                    type: list
+                    elements:
+                        group:
+                            description: The group name.
+                            required: true
+                            type: str
+                        role:
+                            description: The role of the group.
+                            required: true
+                            type: str
+
+    author:
+        - Simon De Meyere (@Izmno)
+
+EXAMPLES: |
+    - name: User Alice should exist
+      izmno.sftpgo.user:
+          admin_username: "admin"
+          admin_password: "admin"
+          base_url: "https://sftpgo.example.com"
+          userdata:
+            username: alice
+            status: 1
+            email: alice@example.com
+          state: present
+    - name: User Bob should not exist
+      izmno.sftpgo.user:
+          admin_username: "admin"
+          admin_password: "admin"
+          base_url: "https://sftpgo.example.com"
+          userdata:
+            username: bob
+            status: 0
+            email: bob@example.com
+          state: absent
+
+RETURN:
+    changed:
+        description: Indicates if the user was created, updated or deleted.
+        type: bool
+        returned: always
+        sample: true
+    meta:
+        description: A message that describes the result of the operation.
+        type: str
+        returned: always
+        sample: "User created"

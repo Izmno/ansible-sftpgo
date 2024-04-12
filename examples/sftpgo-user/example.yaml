@@ -1,0 +1,33 @@
+---
+- hosts: servers
+  pre_tasks:
+    - name: Set facts from environment variables
+      tags: always
+      ansible.builtin.set_fact:
+        SFTPGO_ADMIN_USERNAME: '{{ lookup("env", "SFTPGO_ADMIN_USERNAME") }}'
+        SFTPGO_ADMIN_PASSWORD: '{{ lookup("env", "SFTPGO_ADMIN_PASSWORD") }}'
+        SFTPGO_BASE_URL: '{{ lookup("env", "SFTPGO_BASE_URL") }}'
+
+- name: Manage users
+  hosts: servers
+  tasks:
+    - name: User Alice should exist
+      sftpgo-user:
+        admin_username: "{{ SFTPGO_ADMIN_USERNAME }}"
+        admin_password: "{{ SFTPGO_ADMIN_PASSWORD }}"
+        base_url: "{{ SFTPGO_BASE_URL }}"
+        userdata:
+          status: 1
+          username: alice
+          email: alice@example.com
+        state: present
+    - name: User Bob should not exist
+      sftpgo-user:
+        admin_username: "{{ SFTPGO_ADMIN_USERNAME }}"
+        admin_password: "{{ SFTPGO_ADMIN_PASSWORD }}"
+        base_url: "{{ SFTPGO_BASE_URL }}"
+        userdata:
+          status: 1
+          username: bob
+          email: bob@example.com
+        state: absent

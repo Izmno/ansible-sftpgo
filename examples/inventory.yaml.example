@@ -1,0 +1,3 @@
+servers:
+  hosts:
+    root@my-management-server.example.com:
